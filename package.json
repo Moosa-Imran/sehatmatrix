@@ -1,8 +1,8 @@
 {
-  "name": "sehatmatrix-coming-soon",
+  "name": "sehatmatrix-redirect",
   "version": "1.0.0",
   "private": true,
-  "description": "SehatMatrix coming soon page with a live launch countdown.",
+  "description": "Redirects the old health.corprosoft.com address to app.sehatmatrix.com.",
   "type": "module",
   "main": "server.js",
   "scripts": {
