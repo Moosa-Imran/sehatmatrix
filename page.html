@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SehatMatrix | Coming soon</title>
+<meta name="description" content="SehatMatrix, the new name of your hospital system, launches tonight at 12:00 AM.">
+<meta name="theme-color" content="#04203f">
+<meta property="og:title" content="SehatMatrix is coming tonight">
+<meta property="og:description" content="A health focused name, a faster system and new features. Launching at 12:00 AM.">
+<link rel="icon" href="favicon-32x32.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<!--CONFIG-->
+<style>
+:root {
+    --bg: #04203f; --bg2: #021428; --ink: #fff; --muted: #9fb6d6; --line: rgb(255 255 255 / .12);
+    --teal: #26d8ca; --green: #6fd486; --blue: #8cbcff; --panel: rgb(255 255 255 / .04);
+    --display: 'Plus Jakarta Sans', system-ui, sans-serif; --body: 'IBM Plex Sans', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { color-scheme: dark; }
+body { min-height: 100vh; min-height: 100dvh; background: radial-gradient(1200px 700px at 50% 30%, #072c56, var(--bg) 55%, var(--bg2)); color: var(--ink); font-family: var(--body); overflow-x: hidden; }
+a { color: inherit; }
+#matrix { position: fixed; inset: 0; z-index: 0; }
+.wrap { position: relative; z-index: 1; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; padding: clamp(14px, 2.2vh, 28px) clamp(16px, 4vw, 56px); pointer-events: none; }
+.wrap a, .wrap button { pointer-events: auto; }
+
+header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.brand .tile { width: 46px; height: 46px; border-radius: 12px; background: #fff; display: grid; place-items: center; flex: none; }
+.brand .tile img { width: 36px; height: 36px; }
+.brand .name { font-family: var(--display); font-weight: 800; font-size: 22px; letter-spacing: -0.3px; line-height: 1; }
+.brand .tag { display: block; font-size: 13px; color: var(--muted); margin-top: 4px; }
+.help { font-size: 14px; color: var(--muted); text-decoration: none; border-bottom: 1px solid transparent; transition: color .2s, border-color .2s; }
+.help:hover { color: #fff; border-color: rgb(255 255 255 / .4); }
+.s { color: var(--blue); } .m { color: var(--green); }
+
+main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: clamp(16px, 2.4vh, 48px) 0; }
+.pill { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); font-size: 14px; color: #d6e4f7; }
+.pill i { width: 9px; height: 9px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 0 0 rgb(38 216 202 / .6); animation: ping 1s infinite; }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 rgb(38 216 202 / .55); } 100% { box-shadow: 0 0 0 10px rgb(38 216 202 / 0); } }
+h1 { margin-top: clamp(12px, 2.2vh, 22px); font-family: var(--display); font-weight: 800; font-size: clamp(38px, min(7.2vw, 9vh), 92px); line-height: 1.02; letter-spacing: -0.035em; max-width: 14ch; }
+.lead { margin-top: clamp(10px, 1.8vh, 18px); max-width: 640px; font-size: clamp(17px, 1.6vw, 20px); line-height: 1.55; color: var(--muted); }
+
+.count { margin-top: clamp(18px, 3.2vh, 40px); display: flex; align-items: flex-start; gap: clamp(8px, 1.6vw, 18px); }
+.unit { width: clamp(76px, 13vw, 150px); padding: clamp(10px, 1.8vh, 20px) 0 clamp(8px, 1.3vh, 14px); border-radius: 18px; border: 1px solid var(--line); background: var(--panel); }
+.unit[hidden], .count[hidden] { display: none; }
+.digits { display: flex; justify-content: center; font-family: var(--display); font-weight: 700; font-size: clamp(36px, min(7vw, 8vh), 84px); line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.digit { position: relative; display: inline-block; width: 0.64em; height: 1.08em; overflow: hidden; }
+.digit span { position: absolute; inset: 0; display: grid; place-items: center; }
+.digit .in { animation: slideIn .45s cubic-bezier(.2, .8, .2, 1) both; }
+.digit .out { animation: slideOut .45s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes slideIn { from { transform: translateY(-70%); opacity: 0; filter: blur(4px); } to { transform: none; opacity: 1; filter: none; } }
+@keyframes slideOut { from { transform: none; opacity: 1; } to { transform: translateY(70%); opacity: 0; filter: blur(4px); } }
+.unit small { display: block; margin-top: 8px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.colon { font-family: var(--display); font-weight: 700; font-size: clamp(32px, 5vw, 64px); color: rgb(255 255 255 / .25); padding-top: clamp(16px, 2.2vw, 30px); }
+
+.progress { margin-top: clamp(18px, 3.6vh, 40px); width: min(620px, 100%); }
+.progress[hidden] { display: none; }
+.bar { height: 12px; border-radius: 999px; background: rgb(255 255 255 / .08); overflow: hidden; }
+.bar b { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--teal), var(--green)); transition: width 1s linear; }
+.progress .meta { display: flex; justify-content: space-between; margin-top: 12px; font-size: 15px; color: var(--muted); }
+.progress .meta strong { color: #fff; font-weight: 500; font-variant-numeric: tabular-nums; }
+
+.monitor { margin-top: clamp(14px, 2.6vh, 34px); width: min(760px, 100%); }
+.monitor canvas { display: block; width: 100%; height: clamp(48px, 7vh, 80px); }
+.monitor .meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; font-size: 14px; color: var(--muted); }
+.monitor .meta b { color: #fff; font-weight: 500; }
+.heart { display: inline-flex; align-items: center; gap: 8px; }
+.heart svg { color: var(--teal); }
+.heart.beat svg { animation: beat .35s ease-out; }
+@keyframes beat { 30% { transform: scale(1.35); } 100% { transform: scale(1); } }
+
+.ticker { margin-top: clamp(12px, 2.2vh, 26px); display: inline-flex; align-items: center; gap: 10px; font-size: 16px; color: var(--muted); }
+.ticker .slot { position: relative; display: inline-block; height: 1.5em; line-height: 1.5em; overflow: hidden; text-align: left; transition: width .4s cubic-bezier(.2, .8, .2, 1); }
+.ticker .slot span { display: inline-block; vertical-align: top; color: #fff; font-weight: 500; white-space: nowrap; }
+.ticker .slot .in { animation: tickIn .5s cubic-bezier(.2, .8, .2, 1) both; }
+.ticker .slot .out { position: absolute; top: 0; left: 0; animation: tickOut .5s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes tickIn { from { transform: translateY(100%); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes tickOut { to { transform: translateY(-100%); opacity: 0; } }
+
+.actions { margin-top: clamp(16px, 2.6vh, 34px); display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 22px; border-radius: 14px; font: 600 16px/1 var(--display); text-decoration: none; cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: #fff; transition: transform .2s, background .2s, border-color .2s; }
+.btn:hover { transform: translateY(-2px); background: rgb(255 255 255 / .09); border-color: rgb(255 255 255 / .25); }
+.btn.primary { background: #fff; color: #04305f; border-color: #fff; }
+.btn.primary:hover { background: #e9f3ff; }
+.btn:focus-visible, .help:focus-visible, .brand:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+.btn[hidden] { display: none; }
+
+.note { margin-top: clamp(12px, 2.4vh, 30px); max-width: 620px; font-size: 15px; line-height: 1.55; color: var(--muted); }
+.note b { color: #fff; font-weight: 500; }
+
+footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: 13px; color: rgb(159 182 214 / .8); }
+footer a { text-decoration: none; }
+footer a:hover { color: #fff; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (max-width: 560px) {
+    .brand .tag, .help span { display: none; }
+    .colon { display: none; }
+    .count { gap: 8px; }
+    .unit small { font-size: 11px; }
+    .monitor .meta { flex-direction: column; }
+    .btn { width: 100%; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<canvas id="matrix" aria-hidden="true"></canvas>
+<div class="wrap">
+    <header>
+        <a class="brand" href="./" aria-label="SehatMatrix">
+            <span class="tile"><img src="logo.png" alt=""></span>
+            <span><span class="name"><span class="s">Sehat</span><span class="m">Matrix</span></span><span class="tag">Better Health. Smarter Management.</span></span>
+        </a>
+        <a class="help" id="help" href="#"><span>Need help? </span>Contact support</a>
+    </header>
+
+    <main>
+        <div class="pill"><i></i><span id="pill">Coming soon</span></div>
+        <h1 id="title">SehatMatrix is coming tonight.</h1>
+        <p class="lead" id="lead">Your hospital system gets a health focused name, a faster engine and new features.</p>
+
+        <div class="count" id="count" aria-hidden="true">
+            <div class="unit" id="u-d" hidden><div class="digits" data-unit="d"></div><small>Days</small></div>
+            <div class="unit"><div class="digits" data-unit="h"></div><small>Hours</small></div>
+            <div class="colon">:</div>
+            <div class="unit"><div class="digits" data-unit="m"></div><small>Minutes</small></div>
+            <div class="colon">:</div>
+            <div class="unit"><div class="digits" data-unit="s"></div><small>Seconds</small></div>
+        </div>
+        <div class="progress" id="progress" hidden>
+            <div class="bar"><b id="bar"></b></div>
+            <div class="meta"><span>Update <strong id="pct">0%</strong></span><span>Ready in <strong id="left">30:00</strong></span></div>
+        </div>
+        <p class="sr" aria-live="polite" id="live"></p>
+
+        <div class="monitor" aria-hidden="true">
+            <canvas id="ecg"></canvas>
+            <div class="meta">
+                <span id="when">Launching at 12:00 AM</span>
+                <span class="heart" id="heart"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.7-9.3C.8 8.4 2.9 4.5 6.6 4.5c2.1 0 3.6 1.1 4.5 2.6.9-1.5 2.4-2.6 4.5-2.6 3.7 0 5.8 3.9 4.3 7.2C19.5 16.4 12 21 12 21z"/></svg><span id="beatText">Every beat brings it closer</span></span>
+            </div>
+        </div>
+
+        <div class="ticker"><span>What's new:</span><span class="slot" id="slot"></span></div>
+
+        <div class="actions">
+            <a class="btn primary" id="open" href="#" hidden>Open SehatMatrix
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="btn primary" id="cal" href="launch.ics">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M12 14v4M10 16h4"/></svg>Add to calendar</a>
+            <a class="btn" id="wa" href="#" target="_blank" rel="noopener">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2c0 1.3.9 2.5 1 2.7.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>Share on WhatsApp</a>
+        </div>
+
+        <p class="note" id="note"><b>Please save your work before 12:00 AM.</b> The system may be unavailable during the update.</p>
+    </main>
+
+    <footer>
+        <span>© <span id="year">2026</span> SehatMatrix. A product of CorproSoft.</span>
+        <a id="mail" href="#"></a>
+    </footer>
+</div>
+
+<script>
+(() => {
+    const SM = window.SM || { now: Date.now(), launchAt: Date.now() + 36e5, liveAt: Date.now() + 54e5, appUrl: 'https://app.sehatmatrix.com', timeZone: 'Asia/Karachi', email: 'sehatmatrix@corprosoft.com' };
+    const offset = SM.now - Date.now();               // trust the server clock, not the device
+    const now = () => Date.now() + offset;
+    const $ = id => document.getElementById(id);
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const fmt = (opts, t) => new Intl.DateTimeFormat('en-GB', { timeZone: SM.timeZone, ...opts }).format(t);
+    const clock = t => new Intl.DateTimeFormat('en-US', { timeZone: SM.timeZone, hour: 'numeric', minute: '2-digit' }).format(t);
+    const launchTime = clock(SM.launchAt), liveTime = clock(SM.liveAt);
+    // 12:00 AM belongs to the next day, so people know it as "the night of" the day before.
+    const nightOf = fmt({ weekday: 'long', day: 'numeric', month: 'long' }, SM.launchAt - 60000);
+    const host = SM.appUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+    $('help').href = $('mail').href = `mailto:${SM.email}`;
+    $('mail').textContent = SM.email;
+    $('year').textContent = fmt({ year: 'numeric' }, now());
+    $('open').href = SM.appUrl;
+    $('wa').href = 'https://wa.me/?text=' + encodeURIComponent(`SehatMatrix launches tonight at ${launchTime}. The system may be unavailable until ${liveTime}, so please save your work. After the update, open ${host}`);
+    $('note').innerHTML = `<b>Please save your work before ${launchTime}.</b> The system may be unavailable from ${launchTime} to ${liveTime} during the update.`;
+
+    // ---- Countdown digits: each changed digit slides in over the old one ----
+    function setDigits(el, text) {
+        if (el.dataset.v === text) return;
+        const old = el.dataset.v || '';
+        if (el.children.length !== text.length) { el.innerHTML = ''; for (let i = 0; i < text.length; i++) el.insertAdjacentHTML('beforeend', '<span class="digit"></span>'); }
+        [...text].forEach((ch, i) => {
+            if (old[i] === ch && el.children[i].textContent) return;
+            const d = el.children[i];
+            [...d.children].forEach(c => c.classList.contains('out') ? c.remove() : (c.className = 'out'));
+            const s = document.createElement('span'); s.className = 'in'; s.textContent = ch; d.append(s);
+            setTimeout(() => d.querySelectorAll('.out').forEach(o => o.remove()), 460);
+        });
+        el.dataset.v = text;
+    }
+    const pad = n => String(n).padStart(2, '0');
+    const units = Object.fromEntries([...document.querySelectorAll('[data-unit]')].map(el => [el.dataset.unit, el]));
+
+    // ---- Phases: before launch, updating, live ----
+    let phase = '', lastAnnounce = '';
+    function render() {
+        const t = now();
+        const next = t < SM.launchAt ? 'soon' : t < SM.liveAt ? 'updating' : 'live';
+        if (next !== phase) {
+            const first = !phase;
+            phase = next;
+            const soonText = SM.launchAt - t < 864e5 ? `Tonight at ${launchTime}` : `${nightOf}, ${launchTime}`;
+            const copy = {
+                soon: ['Coming soon · ' + soonText, 'SehatMatrix is coming tonight.', 'Your hospital system gets a health focused name, a faster engine and new features.', `Launching at <b>${launchTime}</b>, night of ${nightOf}`, 'Every beat brings it closer'],
+                updating: ['Updating now', 'SehatMatrix is being set up.', `We are updating the system. It will be ready by ${liveTime}.`, `Back by <b>${liveTime}</b>`, 'Update in progress'],
+                live: ['Live now', 'SehatMatrix is live.', `Open the new system at ${host}.`, `Live since <b>${liveTime}</b>`, 'All systems healthy'],
+            }[phase];
+            $('pill').textContent = copy[0]; $('title').textContent = copy[1]; $('lead').textContent = copy[2]; $('when').innerHTML = copy[3]; $('beatText').textContent = copy[4];
+            document.title = phase === 'live' ? 'SehatMatrix | Live now' : phase === 'updating' ? 'SehatMatrix | Updating' : 'SehatMatrix | Coming soon';
+            $('count').hidden = phase !== 'soon';
+            $('progress').hidden = phase !== 'updating';
+            $('open').hidden = phase !== 'live';
+            $('cal').hidden = $('wa').hidden = $('note').hidden = phase !== 'soon';
+            if (!first && phase === 'live') celebrate();
+        }
+        if (phase === 'soon') {
+            let s = Math.max(0, Math.floor((SM.launchAt - t) / 1000));
+            const d = Math.floor(s / 86400); s -= d * 86400;
+            const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+            $('u-d').hidden = d === 0;
+            if (d) setDigits(units.d, pad(d));
+            setDigits(units.h, pad(h)); setDigits(units.m, pad(m)); setDigits(units.s, pad(sec));
+            const say = d ? `${d} days and ${h} hours to launch` : h ? `${h} hours and ${m} minutes to launch` : `${m} minutes to launch`;
+            if (say !== lastAnnounce) { $('live').textContent = say; lastAnnounce = say; }
+        } else if (phase === 'updating') {
+            const k = (t - SM.launchAt) / (SM.liveAt - SM.launchAt), left = Math.ceil((SM.liveAt - t) / 1000);
+            $('bar').style.width = (k * 100).toFixed(1) + '%';
+            $('pct').textContent = Math.floor(k * 100) + '%';
+            $('left').textContent = `${pad(Math.floor(left / 60))}:${pad(left % 60)}`;
+        }
+    }
+
+    // ---- What's new ticker ----
+    const news = ['A health focused name', 'A faster system', 'New features for every team', `A new address: ${host}`];
+    let ni = 0;
+    function tick() {
+        const slot = $('slot');
+        slot.querySelectorAll('.out').forEach(o => o.remove());
+        const cur = slot.querySelector('.in'); if (cur) cur.className = 'out';
+        const s = document.createElement('span'); s.className = 'in'; s.textContent = news[ni++ % news.length]; slot.append(s);
+        slot.style.width = Math.ceil(s.getBoundingClientRect().width) + 'px';
+    }
+    tick(); setInterval(tick, 2800);
+
+    // ---- Dot matrix background: dots light up near the pointer and ripple on every heartbeat ----
+    const cv = $('matrix'), cx = cv.getContext('2d');
+    const GAP = 26, ripples = [], mouse = { x: -1e4, y: -1e4 };
+    let W = 0, H = 0;
+    function resize() {
+        const dpr = Math.min(2, devicePixelRatio || 1);
+        W = innerWidth; H = innerHeight;
+        cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px';
+        cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        if (reduce) drawMatrix(performance.now());
+    }
+    function drawMatrix(ts) {
+        cx.clearRect(0, 0, W, H);
+        for (let i = ripples.length - 1; i >= 0; i--) if (ts - ripples[i].t > 1800) ripples.splice(i, 1);
+        cx.fillStyle = 'rgba(140, 188, 255, 0.10)';
+        const lit = [];
+        for (let y = GAP / 2; y < H; y += GAP) {
+            for (let x = GAP / 2; x < W; x += GAP) {
+                const dm = Math.hypot(x - mouse.x, y - mouse.y);
+                let a = dm < 200 ? (1 - dm / 200) ** 1.3 * 0.95 : 0;
+                for (const r of ripples) {
+                    const age = (ts - r.t) / 1000, dr = Math.abs(Math.hypot(x - r.x, y - r.y) - age * r.speed);
+                    if (dr < 50) a += (1 - dr / 50) * (1 - age / 1.8) * r.k;
+                }
+                if (a > 0.02) lit.push(x, y, Math.min(1, a));
+                else cx.fillRect(x - 1, y - 1, 2, 2);
+            }
+        }
+        for (let i = 0; i < lit.length; i += 3) {
+            const a = lit[i + 2], s = 2 + a * 2.6;
+            cx.fillStyle = `rgba(${Math.round(38 + a * 40)}, ${Math.round(216 - a * 10)}, ${Math.round(202 - a * 70)}, ${0.15 + a * 0.85})`;
+            cx.fillRect(lit[i] - s / 2, lit[i + 1] - s / 2, s, s);
+        }
+    }
+    addEventListener('resize', resize);
+    addEventListener('pointermove', e => { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
+    document.addEventListener('pointerleave', () => { mouse.x = mouse.y = -1e4; });
+    addEventListener('pointerdown', e => { if (!e.target.closest('a, button')) ripples.push({ x: e.clientX, y: e.clientY, t: performance.now(), speed: 620, k: 0.9 }); });
+    function celebrate() {
+        if (reduce) return;
+        for (let i = 0; i < 6; i++) setTimeout(() => ripples.push({ x: W / 2, y: H * 0.42, t: performance.now(), speed: 700, k: 1 }), i * 220);
+    }
+
+    // ---- Patient monitor trace: one beat per second, the R wave lands on each tick ----
+    const ecg = $('ecg'), ex = ecg.getContext('2d');
+    const PERIOD = 4000, GAP_PX = 26;
+    function wave(p) {           // p: 0..1 within a beat, R peak at 0
+        const g = (c, w, h) => h * Math.exp(-(((p - c + 1.5) % 1 - 0.5) ** 2) / (2 * w * w));
+        return g(0, 0.012, 1) + g(-0.035, 0.012, -0.22) + g(0.04, 0.014, -0.3) + g(-0.16, 0.035, 0.12) + g(0.25, 0.06, 0.22);
+    }
+    function sizeEcg() {
+        const dpr = Math.min(2, devicePixelRatio || 1), r = ecg.getBoundingClientRect();
+        ecg.width = r.width * dpr; ecg.height = r.height * dpr; ex.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function drawEcg(t) {
+        const w = ecg.clientWidth, h = ecg.clientHeight, mid = h * 0.62, amp = h * 0.52;
+        ex.clearRect(0, 0, w, h);
+        const start = t - (t % PERIOD), head = ((t % PERIOD) / PERIOD) * w;
+        const yAt = x => { const tx = start + (x / w) * PERIOD - (x > head ? PERIOD : 0); return mid - wave(((tx % 1000) + 1000) % 1000 / 1000) * amp; };
+        ex.lineWidth = 2; ex.lineJoin = 'round';
+        const step = 2;
+        // Drawn in short segments so older parts of the sweep can fade out.
+        for (let x0 = 0; x0 < w; x0 += 24) {
+            ex.beginPath();
+            let started = false;
+            for (let x = x0; x <= Math.min(w, x0 + 24); x += step) {
+                if (x > head && x < head + GAP_PX) { started = false; continue; }
+                const y = yAt(x);
+                started ? ex.lineTo(x, y) : ex.moveTo(x, y); started = true;
+            }
+            const age = x0 <= head ? (head - x0) / w : (head + w - x0) / w;
+            ex.strokeStyle = `rgba(38, 216, 202, ${Math.max(0.12, 1 - age * 0.9)})`;
+            ex.stroke();
+        }
+        if (!reduce) {
+            const y = yAt(Math.max(0, head - 0.5));
+            ex.fillStyle = '#fff'; ex.beginPath(); ex.arc(head, y, 3.2, 0, Math.PI * 2); ex.fill();
+            ex.fillStyle = 'rgba(38, 216, 202, 0.25)'; ex.beginPath(); ex.arc(head, y, 9, 0, Math.PI * 2); ex.fill();
+        }
+    }
+    addEventListener('resize', sizeEcg);
+
+    // ---- Main loop ----
+    let lastSec = -1;
+    function frame(ts) {
+        const t = now(), sec = Math.floor(t / 1000);
+        if (sec !== lastSec) {
+            lastSec = sec;
+            render();
+            const heart = $('heart'); heart.classList.remove('beat'); void heart.offsetWidth; heart.classList.add('beat');
+            const r = $('count').hidden ? $('progress').getBoundingClientRect() : $('count').getBoundingClientRect();
+            if (phase !== 'live') ripples.push({ x: r.left + r.width / 2, y: r.top + r.height / 2, t: ts, speed: 520, k: 0.45 });
+        }
+        drawMatrix(ts);
+        drawEcg(t);
+        requestAnimationFrame(frame);
+    }
+    resize(); sizeEcg(); render();
+    if (reduce) { drawEcg(now()); setInterval(() => { render(); drawEcg(now()); }, 1000); }
+    else requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
